@@ -1,0 +1,21 @@
+﻿Build started 2018-03-15 10:55:30.
+     1>Project "C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\PDC\PDC.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\PDC\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+     1>c:\program files (x86)\windows kits\8.1\include\um\wincon.h(118): warning C4005: 'MOUSE_MOVED' : macro redefinition
+                 c:\users\szymon\documents\visual studio 2013\projects\pdc\pdc\include\curses.h(160) : see previous definition of 'MOUSE_MOVED'
+     1>c:\users\szymon\documents\visual studio 2013\projects\pdc\pdc\main.cpp(42): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\szymon\documents\visual studio 2013\projects\pdc\pdc\main.cpp(50): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\szymon\documents\visual studio 2013\projects\pdc\pdc\main.cpp(56): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+     1>c:\users\szymon\documents\visual studio 2013\projects\pdc\pdc\main.cpp(58): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>c:\users\szymon\documents\visual studio 2013\projects\pdc\pdc\main.cpp(59): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>c:\users\szymon\documents\visual studio 2013\projects\pdc\pdc\main.cpp(81): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+       Link:
+         C:\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\Debug\PDC.exe" /INCREMENTAL /NOLOGO "C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\PDC\lib\pdcurses.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\Debug\PDC.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\Debug\PDC.lib" /MACHINE:X86 Debug\main.obj
+         PDC.vcxproj -> C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\Debug\PDC.exe
+     1>Done Building Project "C:\Users\Szymon\documents\visual studio 2013\Projects\PDC\PDC\PDC.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.61
