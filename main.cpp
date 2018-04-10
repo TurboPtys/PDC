@@ -5,9 +5,7 @@
 #include <cstdlib>
 
 
-//int kolumny = 0;
-//int rzedy = 0;
-//char tekst[] = "Wyswietlany tekst!";
+
 bool sztucce[5] = { 0, 0, 0, 0, 0 };
 char sztucceC[5] = { 'W', 'W', 'W', 'W', 'W' };
 float progres[5] = { 5, 7, 6, 9, 2 };
@@ -16,7 +14,7 @@ int glod[5] = { 0, 0, 0, 0, 0 };
 //string name[5];//= { "SOKRATES", "PLATON", "ARYSTOTELES", "EPIKUR", "ZENON" };
 //name[0] = "SOKRATES";
 //string color[5]={"COLOR_RED"};
-
+bool fin = false;
 
 using namespace std;
 
@@ -29,6 +27,11 @@ public:
 	int licznik;
 	void operator()(){
 		while (true){
+
+			if (fin){
+				break;
+			}
+
 			if (sztucce[szt[0]] == false && sztucce[szt[1]] == false){
 				sztucce[szt[0]] = true;
 				sztucce[szt[1]] = true;
@@ -51,13 +54,13 @@ public:
 				
 			}
 			
-				while (progres[licznik] != 0){
+			while (progres[licznik] != 0){
 					Sleep(250);
 					progres[licznik]=progres[licznik]-0.25;
-				}
-				progres[licznik] = (rand() % 5) + 5;
-				glod[licznik] = glod[licznik] + progres[licznik];
 			}
+			progres[licznik] = (rand() % 5) + 5;
+			glod[licznik] = glod[licznik] + progres[licznik];
+		}
 		
 	}
 
@@ -69,12 +72,20 @@ FILOZOF::FILOZOF(int  a, int  b, int c,char d){
 	licznik = c;
 	ch = d;
 }
-char k='l';
+
+char p='a';
+bool elo = false;
+
 void check(){
-	while (true){
-		k = getch();
-	}
+	do{
+		p = getch();
+
+		
+	} while (p != 'q');
+
+	fin = true;
 }
+
 
 int main(){
 
@@ -94,212 +105,195 @@ int main(){
 	thread t4(f4);
 	thread t5(f5);
 	
-	thread cyk(check);
-	
+	//thread cyk(check);
+	thread myk(check);
+	//thread bb(gg);
 
-	try{
+	//try{
 
 
 
 	int i = 0;
 	initscr(); //Start
-	if (has_colors() == TRUE) //1
-	{
-		//char k;
-		while (k!='q')
+		if (has_colors() == TRUE) //1
 		{
-	
-			start_color(); //2
-			init_pair(1, COLOR_WHITE, COLOR_BLACK); //3
+
+			while (true){
+						
+				start_color(); //2
+				init_pair(1, COLOR_WHITE, COLOR_BLACK); //3
 		
-			attron(COLOR_PAIR(1)); //4
-			printw("%c  ", k);
-			printw("SO2 PROJEKT - FILZOFOWIE \t");
-			attron(A_BOLD);
+				attron(COLOR_PAIR(1)); //4
+				printw("SO2 PROJEKT - FILZOFOWIE \t");
+				attron(A_BOLD);
 	
-			printw("Czas: %.2f s", (float)i / 4);
-			attroff(A_BOLD);
-			printw("\n\nSZTUCCE: ");
-			for (int j = 0; j < 5; j++){
+				printw("Czas: %.2f s", (float)i / 4);
+				attroff(A_BOLD);
+				printw("\n\nSZTUCCE: ");
+				for (int j = 0; j < 5; j++){
 
 
 			
-				if (sztucceC[j] == 'R'){
-					attroff(COLOR_PAIR(1));
-					init_pair(2, COLOR_RED, COLOR_BLACK);
-					attron(COLOR_PAIR(2));
-					printw(" %d ", j);
-					attroff(COLOR_PAIR(2));
-				}
-				else if (sztucceC[j] == 'Y'){
-					attroff(COLOR_PAIR(1));
-					init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-					attron(COLOR_PAIR(3));
-					printw(" %d ", j);
-					attroff(COLOR_PAIR(3));
-				}
-				else if (sztucceC[j] == 'G'){
-					attroff(COLOR_PAIR(1));
-					init_pair(4, COLOR_GREEN, COLOR_BLACK);
-					attron(COLOR_PAIR(4));
-					printw(" %d ", j);
-					attroff(COLOR_PAIR(4));
-				}
-				else if (sztucceC[j] == 'B'){
-					attroff(COLOR_PAIR(1));
-					init_pair(5, COLOR_BLUE, COLOR_BLACK);
-					attron(COLOR_PAIR(5));
-					printw(" %d ", j);
-					attroff(COLOR_PAIR(5));
-				}
-				else if (sztucceC[j] == 'C'){
-					attroff(COLOR_PAIR(1));
-					init_pair(6, COLOR_CYAN, COLOR_BLACK);
-					attron(COLOR_PAIR(6));
-					printw(" %d ", j);
-					attroff(COLOR_PAIR(6));
-				}
-				else if (sztucceC[j] == 'W'){
-					printw(" %d ", j);
-				}
+					if (sztucceC[j] == 'R'){
+						attroff(COLOR_PAIR(1));
+						init_pair(2, COLOR_RED, COLOR_BLACK);
+						attron(COLOR_PAIR(2));
+						printw(" %d ", j);
+						attroff(COLOR_PAIR(2));
+					}
+					else if (sztucceC[j] == 'Y'){
+						attroff(COLOR_PAIR(1));
+						init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+						attron(COLOR_PAIR(3));
+						printw(" %d ", j);
+						attroff(COLOR_PAIR(3));
+					}
+					else if (sztucceC[j] == 'G'){
+						attroff(COLOR_PAIR(1));
+						init_pair(4, COLOR_GREEN, COLOR_BLACK);
+						attron(COLOR_PAIR(4));
+						printw(" %d ", j);
+						attroff(COLOR_PAIR(4));
+					}
+					else if (sztucceC[j] == 'B'){
+						attroff(COLOR_PAIR(1));
+						init_pair(5, COLOR_BLUE, COLOR_BLACK);
+						attron(COLOR_PAIR(5));
+						printw(" %d ", j);
+						attroff(COLOR_PAIR(5));
+					}
+					else if (sztucceC[j] == 'C'){
+						attroff(COLOR_PAIR(1));
+						init_pair(6, COLOR_CYAN, COLOR_BLACK);
+						attron(COLOR_PAIR(6));
+						printw(" %d ", j);
+						attroff(COLOR_PAIR(6));
+					}
+					else if (sztucceC[j] == 'W'){
+						printw(" %d ", j);
+					}
 				
-			}
-			init_pair(1, COLOR_WHITE, COLOR_BLACK);
-			attron(COLOR_PAIR(1));
-			printw("\n\n\nFILOZOFOWIE: \tCZYNNOSC\tPROGRES\tGLOD");
-			attroff(COLOR_PAIR(1));
+				}
+				init_pair(1, COLOR_WHITE, COLOR_BLACK);
+				attron(COLOR_PAIR(1));
+				printw("\n\n\nFILOZOFOWIE: \tCZYNNOSC\tPROGRES\tGLOD");
+				attroff(COLOR_PAIR(1));
 
-			//SOKRATES
-			init_pair(2, COLOR_RED, COLOR_BLACK);
-			attron(COLOR_PAIR(2));
-			printw("\n\nSOKRATES: \t");
-			if (stan[0] == false){
-				printw("medytuje");
-			}
-			else{
-				printw("je\t");
-			}
-				printw("\t%.2f s",progres[0]);
-				printw("\t %d s", glod[0]);
-			attroff(COLOR_PAIR(2));
+				//SOKRATES
+				init_pair(2, COLOR_RED, COLOR_BLACK);
+				attron(COLOR_PAIR(2));
+				printw("\n\nSOKRATES: \t");
+				if (stan[0] == false){
+					printw("medytuje");
+				}
+				else{
+					printw("je\t");
+				}
+					printw("\t%.2f s",progres[0]);
+					printw("\t %d s", glod[0]);
+				attroff(COLOR_PAIR(2));
 
-			//PLATON
-			init_pair(3, COLOR_YELLOW, COLOR_BLACK);
-			attron(COLOR_PAIR(3));
-			printw("\n\nPLATON: \t");
-			if (stan[1] == false){
-				printw("medytuje");
-			}
-			else{
-				printw("je\t");
-			}
-			printw("\t%.2f s", progres[1]);
-			printw("\t %d s",glod[1]);
-			attroff(COLOR_PAIR(3));
+				//PLATON
+				init_pair(3, COLOR_YELLOW, COLOR_BLACK);
+				attron(COLOR_PAIR(3));
+				printw("\n\nPLATON: \t");
+				if (stan[1] == false){
+					printw("medytuje");
+				}
+				else{
+					printw("je\t");
+				}
+				printw("\t%.2f s", progres[1]);
+				printw("\t %d s",glod[1]);
+				attroff(COLOR_PAIR(3));
 
-			//ARYSTOTELES
-			init_pair(4, COLOR_GREEN, COLOR_BLACK);
-			attron(COLOR_PAIR(4));
-			printw("\n\nARYSTOTELES: ");
-			if (stan[2] == false){
-				printw("\tmedytuje");
-			}
-			else{
-				printw("\tje\t");
-			}
-			printw("\t%.2f s", progres[2]);
-			printw("\t %d s", glod[2]);
-			attroff(COLOR_PAIR(4));
+				//ARYSTOTELES
+				init_pair(4, COLOR_GREEN, COLOR_BLACK);
+				attron(COLOR_PAIR(4));
+				printw("\n\nARYSTOTELES: ");
+				if (stan[2] == false){
+					printw("\tmedytuje");
+				}
+				else{
+					printw("\tje\t");
+				}
+				printw("\t%.2f s", progres[2]);
+				printw("\t %d s", glod[2]);
+				attroff(COLOR_PAIR(4));
 
-			//EPIKUR
-			init_pair(5, COLOR_BLUE, COLOR_BLACK);
-			attron(COLOR_PAIR(5));
-			printw("\n\nEPIKUR: ");
-			if (stan[3] == false){
-				printw("\tmedytuje");
-			}
-			else{
-				printw("\tje\t");
-			}
-			printw("\t%.2f s", progres[3]);
-			printw("\t %d s", glod[3]);
-			attroff(COLOR_PAIR(5));
+				//EPIKUR
+				init_pair(5, COLOR_BLUE, COLOR_BLACK);
+				attron(COLOR_PAIR(5));
+				printw("\n\nEPIKUR: ");
+				if (stan[3] == false){
+					printw("\tmedytuje");
+				}
+				else{
+					printw("\tje\t");
+				}
+				printw("\t%.2f s", progres[3]);
+				printw("\t %d s", glod[3]);
+				attroff(COLOR_PAIR(5));
 
-			//ZENON
-			init_pair(6, COLOR_CYAN, COLOR_BLACK);
-			attron(COLOR_PAIR(6));
-			printw("\n\nZENON: \t");
-			if (stan[4] == false){
-				printw("\tmedytuje");
-			}
-			else{
-				printw("\tje\t");
-			}
-			printw("\t%.2f s", progres[4]); 
-			printw("\t %d s", glod[4]);
-			attroff(COLOR_PAIR(6)); //Wy³¹czenie koloru tekstu
-			//attroff(COLOR_PAIR(2));
-			 //1
+				//ZENON
+				init_pair(6, COLOR_CYAN, COLOR_BLACK);
+				attron(COLOR_PAIR(6));
+				printw("\n\nZENON: \t");
+				if (stan[4] == false){
+					printw("\tmedytuje");
+				}
+				else{
+					printw("\tje\t");
+				}
+				printw("\t%.2f s", progres[4]); 
+				printw("\t %d s", glod[4]);
+				attroff(COLOR_PAIR(6)); //Wy³¹czenie koloru tekstu
+				//attroff(COLOR_PAIR(2));
+				 //1
+				
+				Sleep(250);
+				refresh();
+				clear();
+				i++;
+				
+				if (fin){
 
-			Sleep(250);
+					break;
+				}
+
+			}
+
+			
+
 			refresh();
 			clear();
-			i++;
-			if (k == 'a'){
-				
-	/*			if (t1.joinable()){
-					t1.join();
-					//throw;
-				}
-				if (t2.joinable()){
-					t2.join();
-					//throw;
-				}
-				if (t3.joinable()){
-					t3.join();
-					//throw;
-				}
-				if (t4.joinable()){
-					t4.join();
-					//throw;
-				}*/
-				if (t5.joinable()){
-					
-					t5.join();
-				//	t5.~thread();
-					throw;
-				//}
-//				if (cyk.joinable()){
-//					cyk.join();
-//				}
-				
-				k = 'l';
+			endwin();
+			
+			printf("Trwa zamykanie watkow ...");
 
-			}
+			if (myk.joinable())
+				myk.join();
 
+			if (t1.joinable())
+				t1.join();
+
+			if (t2.joinable())
+				t2.join();
+
+			if (t3.joinable())
+				t3.join();
+
+			if (t4.joinable())
+				t4.join();
+			
+			if (t5.joinable())
+				t5.join();
+			
 		}
-
-		printw("END");
-		getch();
-		endwin(); //koniec
-		return 0;
-
-
-		//getmaxyx(stdscr, rzedy, kolumny);
-		//wyswietlanie tekstu
-		//mvprintw(rzedy / 2, (kolumny / 2) - (sizeof(tekst) / 2), tekst); //2
-		//getch();
-	}
-	else
-	{
+		else
+		{
 		printw("Twoja Konsolka nie obsluguje kolorow. :/ ");
-	}
-	}
-	catch (...){
-		
-
-
-		
-	}
+		}
+	
 	return 0;
 }
