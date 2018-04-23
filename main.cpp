@@ -3,80 +3,157 @@
 #include <Windows.h>
 #include <thread>
 #include <cstdlib>
+#include <semaphore.h>
+#include <pthread.h>
 
+#define NUMBER_OF_PHILOSOPHERS 5
 
-
-bool sztucce[5] = { 0, 0, 0, 0, 0 };
-char sztucceC[5] = { 'W', 'W', 'W', 'W', 'W' };
-float progres[5] = { 5, 7, 6, 9, 2 };
-bool stan[5] = { 0, 0, 0, 0, 0 };
-int glod[5] = { 0, 0, 0, 0, 0 };
-//string name[5];//= { "SOKRATES", "PLATON", "ARYSTOTELES", "EPIKUR", "ZENON" };
-//name[0] = "SOKRATES";
-//string color[5]={"COLOR_RED"};
+bool sztucce[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+char sztucceC[10] = { 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W', 'W' };
+float progres[10] = { 5, 7, 6, 9, 2, 8,	2,	5,	6,	4 };
+int stan[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+float glod[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+char kolor[10] = { 'R', 'Y', 'G', 'B', 'C', 'R', 'Y', 'G', 'B', 'C' };
 bool fin = false;
 
 using namespace std;
 
+sem_t waiter;
+sem_t fork[NUMBER_OF_PHILOSOPHERS];
+pthread_t philosophers[NUMBER_OF_PHILOSOPHERS];
+
+
 class FILOZOF{
 
 public:
-	FILOZOF(int a, int b,int c,char d);
-	int szt[2];
-	char ch;
-	int licznik;
-	void operator()(){
+	FILOZOF();
+	FILOZOF(int a);
+	int index;
+	void *life(void){
+
 		while (true){
 
 			if (fin){
 				break;
 			}
 
-			if (sztucce[szt[0]] == false && sztucce[szt[1]] == false){
-				sztucce[szt[0]] = true;
-				sztucce[szt[1]] = true;
-				sztucceC[szt[0]] = ch;
-				sztucceC[szt[1]] = ch;
-				glod[licznik] = 0;
+			//
+			//myœlenie 
+			//
 
-				stan[licznik] = true;
-				while (progres[licznik] != 0){
-					Sleep(250);
-					progres[licznik] = progres[licznik] - 0.25;
-				}
-				sztucce[szt[0]] = false;
-				sztucce[szt[1]] = false;
-				sztucceC[szt[0]] = 'W';
-				sztucceC[szt[1]] = 'W';
-				stan[licznik] = false;
+
+			stan[index] = 0;
+
+			while (progres[index] != 0){
+				Sleep(250);
+				progres[index] = progres[index] - 0.25;
+			}
+
+		
+
+			//
+			//czekanie na kelenra
+			//
+			stan[index] = 1;
+
+			progres[index] = 1;
+			while (progres[index])
+			{
 				
-				progres[licznik] = (rand()%5)+5;
-				
+				Sleep(250);
+				progres[index] = progres[index] - 0.25;
+			}
+
+			
+
+			sem_wait(&waiter);
+			//
+			//siedzi przy stole
+			//
+
+			stan[index] = 2;
+			int right = (index + 1) % NUMBER_OF_PHILOSOPHERS;
+			int left = (index) % NUMBER_OF_PHILOSOPHERS;
+			progres[index] = 1;
+			while (progres[index])
+			{
+
+				Sleep(250);
+				progres[index] = progres[index] - 0.25;
 			}
 			
-			while (progres[licznik] != 0){
-					Sleep(250);
-					progres[licznik]=progres[licznik]-0.25;
-			}
-			progres[licznik] = (rand() % 5) + 5;
-			glod[licznik] = glod[licznik] + progres[licznik];
+
+			sem_wait(&fork[right]);
+			sem_wait(&fork[left]);
+
+			sztucce[right] = true;
+			sztucce[left] = true;
+			sztucceC[right] = kolor[index];
+			sztucceC[left] = kolor[index];
+
+			//
+			//jedzenie
+			//
+
+			progres[index] = (rand() % 5) + 5;
+
+			
+
+					stan[index] = 3;
+					while (progres[index] != 0){
+						Sleep(250);
+						progres[index] = progres[index] - 0.25;
+					}
+			//
+			//odkladanie sztuccy
+			//
+					stan[index] = 4;
+					progres[index] = 0.5;
+					while (progres[index] != 0){
+						Sleep(250);
+						progres[index] = progres[index] - 0.25;
+					}
+				
+
+					sztucce[right] = false;
+					sztucce[left] = false;
+					sztucceC[right] = 'W';
+					sztucceC[left] = 'W';
+
+					sem_post(&fork[left]);
+					sem_post(&fork[right]);
+					sem_post(&waiter);
+
+
+
+				
+				stan[index] = 0;
+				progres[index] = (rand() % 5) + 5;
+
 		}
+		
 		
 	}
 
+	static void *exe(void *context){
+
+		return ((FILOZOF *)context)->life();
+	}
 };
 
-FILOZOF::FILOZOF(int  a, int  b, int c,char d){
-	szt[0] = a;
-	szt[1] = b;
-	licznik = c;
-	ch = d;
+FILOZOF::FILOZOF(int  a){
+	index = a;
+
+}
+
+FILOZOF::FILOZOF(){
+	index = NULL;
 }
 
 char p='a';
 bool elo = false;
 
-void check(){
+void* check(void *){
 	do{
 		p = getch();
 
@@ -84,7 +161,10 @@ void check(){
 	} while (p != 'q');
 
 	fin = true;
+	return NULL;
 }
+
+
 
 
 int main(){
@@ -92,25 +172,34 @@ int main(){
 	srand(time(NULL));
 
 
-	
-	FILOZOF f1(0, 1,0,'R');
-	FILOZOF f2(1, 2,1,'Y');
-	FILOZOF f3(2, 3, 2,'G');
-	FILOZOF f4(3, 4, 3,'B');
-	FILOZOF f5(4, 0, 4,'C');
+	FILOZOF filo[NUMBER_OF_PHILOSOPHERS];
 
-	thread t1(f1);
-	thread t2(f2);
-	thread t3(f3);
-	thread t4(f4);
-	thread t5(f5);
-	
-	//thread cyk(check);
-	thread myk(check);
-	//thread bb(gg);
+	for (int i = 0; i < NUMBER_OF_PHILOSOPHERS; i++){
+
+		filo[i] = FILOZOF(i);
+
+	}
+
+
+	sem_init(&waiter, 0, NUMBER_OF_PHILOSOPHERS - 1);
+
+	for (int i = 0; i < NUMBER_OF_PHILOSOPHERS; ++i) {
+		sem_init(&fork[i], 0, 1);
+	}
+
+	pthread_t cyk;
+
+	pthread_create(&cyk, NULL, check, NULL);
+
+	for (int i = 0; i < NUMBER_OF_PHILOSOPHERS; ++i) {
+		pthread_create(&philosophers[i], NULL, &FILOZOF::exe, &filo[i]);
+	}
+
+
+
+
 
 	//try{
-
 
 
 	int i = 0;
@@ -130,7 +219,7 @@ int main(){
 				printw("Czas: %.2f s", (float)i / 4);
 				attroff(A_BOLD);
 				printw("\n\nSZTUCCE: ");
-				for (int j = 0; j < 5; j++){
+				for (int j = 0; j < NUMBER_OF_PHILOSOPHERS; j++){
 
 
 			
@@ -174,87 +263,178 @@ int main(){
 					}
 				
 				}
+
 				init_pair(1, COLOR_WHITE, COLOR_BLACK);
 				attron(COLOR_PAIR(1));
-				printw("\n\n\nFILOZOFOWIE: \tCZYNNOSC\tPROGRES\tGLOD");
+				printw("\n\n\nFILOZOFOWIE: \tCZYNNOSC\t\t\tPROGRES\tGLOD");
 				attroff(COLOR_PAIR(1));
 
 				//SOKRATES
 				init_pair(2, COLOR_RED, COLOR_BLACK);
 				attron(COLOR_PAIR(2));
 				printw("\n\nSOKRATES: \t");
-				if (stan[0] == false){
-					printw("medytuje");
+				if (stan[0] == 0){
+					printw("medytuje\t");
 				}
-				else{
-					printw("je\t");
+				else if (stan[0] == 1){
+					printw("czeka na kelnera");
 				}
-					printw("\t%.2f s",progres[0]);
-					printw("\t %d s", glod[0]);
+				else if (stan[0]==2)
+				{
+					printw("siedzi przy stole");
+				}
+				else if (stan[0]==3){
+					printw("je\t\t");
+				}
+				else if (stan[0] == 4){
+					printw("oddklada sztucce");
+				}
+					printw("\t\t%.2f s",progres[0]);
+					printw("\t %.2f s", glod[0]);
 				attroff(COLOR_PAIR(2));
 
 				//PLATON
 				init_pair(3, COLOR_YELLOW, COLOR_BLACK);
 				attron(COLOR_PAIR(3));
 				printw("\n\nPLATON: \t");
-				if (stan[1] == false){
-					printw("medytuje");
+				if (stan[1] == 0){
+					printw("medytuje\t");
 				}
-				else{
-					printw("je\t");
+				else if (stan[1] == 1){
+					printw("czeka na kelnera");
 				}
-				printw("\t%.2f s", progres[1]);
-				printw("\t %d s",glod[1]);
+				else if (stan[1] == 2)
+				{
+					printw("siedzi przy stole");
+				}
+				else if (stan[1] == 3){
+					printw("je\t\t");
+				}
+				else if (stan[1] == 4){
+					printw("oddklada sztucce");
+				}
+				printw("\t\t%.2f s", progres[1]);
+				printw("\t %.2f s",glod[1]);
 				attroff(COLOR_PAIR(3));
 
 				//ARYSTOTELES
 				init_pair(4, COLOR_GREEN, COLOR_BLACK);
 				attron(COLOR_PAIR(4));
 				printw("\n\nARYSTOTELES: ");
-				if (stan[2] == false){
-					printw("\tmedytuje");
+				if (stan[2] == 0){
+					printw("\tmedytuje\t");
 				}
-				else{
-					printw("\tje\t");
+				else if (stan[2] == 1){
+					printw("\tczeka na kelnera");
 				}
-				printw("\t%.2f s", progres[2]);
-				printw("\t %d s", glod[2]);
+				else if (stan[2] == 2)
+				{
+					printw("\tsiedzi przy stole");
+				}
+				else if (stan[2] == 3){
+					printw("\tje\t\t");
+				}
+				else if (stan[2] == 4){
+					printw("\toddklada sztucce");
+				}
+				printw("\t\t%.2f s", progres[2]);
+				printw("\t %.2f s", glod[2]);
 				attroff(COLOR_PAIR(4));
 
 				//EPIKUR
 				init_pair(5, COLOR_BLUE, COLOR_BLACK);
 				attron(COLOR_PAIR(5));
 				printw("\n\nEPIKUR: ");
-				if (stan[3] == false){
-					printw("\tmedytuje");
+				if (stan[3] == 0){
+					printw("\tmedytuje\t");
 				}
-				else{
-					printw("\tje\t");
+				else if (stan[3] == 1){
+					printw("\tczeka na kelnera");
 				}
-				printw("\t%.2f s", progres[3]);
-				printw("\t %d s", glod[3]);
+				else if (stan[3] == 2)
+				{
+					printw("\tsiedzi przy stole");
+				}
+				else if (stan[3] == 3){
+					printw("\tje\t\t");
+				}
+				else if (stan[3] == 4){
+					printw("\toddklada sztucce");
+				}
+				printw("\t\t%.2f s", progres[3]);
+				printw("\t %.2f s", glod[3]);
 				attroff(COLOR_PAIR(5));
 
 				//ZENON
 				init_pair(6, COLOR_CYAN, COLOR_BLACK);
 				attron(COLOR_PAIR(6));
 				printw("\n\nZENON: \t");
-				if (stan[4] == false){
-					printw("\tmedytuje");
+				if (stan[4] == 0){
+					printw("\tmedytuje\t");
 				}
-				else{
-					printw("\tje\t");
+				else if (stan[4] == 1){
+					printw("\tczeka na kelnera");
 				}
-				printw("\t%.2f s", progres[4]); 
-				printw("\t %d s", glod[4]);
+				else if (stan[4] == 2)
+				{
+					printw("\tsiedzi przy stole");
+				}
+				else if (stan[4] == 3){
+					printw("\tje\t\t");
+				}
+				else if (stan[4] == 4){
+					printw("\toddklada sztucce");
+				}
+				printw("\t\t%.2f s", progres[4]); 
+				printw("\t %.2f s", glod[4]);
 				attroff(COLOR_PAIR(6)); //Wy³¹czenie koloru tekstu
 				//attroff(COLOR_PAIR(2));
 				 //1
+
+				if (NUMBER_OF_PHILOSOPHERS > 5){
+
+					for (int u = 5; u < NUMBER_OF_PHILOSOPHERS; u++){
+						init_pair(2, COLOR_RED, COLOR_BLACK);
+						attron(COLOR_PAIR(2));
+						printw("\n\%d %c: \t\t", u,kolor[u]);
+						if (stan[u] == 0){
+							printw("medytuje\t");
+						}
+						else if (stan[u] == 1){
+							printw("czeka na kelnera");
+						}
+						else if (stan[u] == 2)
+						{
+							printw("siedzi przy stole");
+						}
+						else if (stan[u] == 3){
+							printw("je\t\t");
+						}
+						else if (stan[u] == 4){
+							printw("oddklada sztucce");
+						}
+						printw("\t\t%.2f s", progres[u]);
+						printw("\t %.2f s", glod[u]);
+						attroff(COLOR_PAIR(2));
+					}
+				}
 				
 				Sleep(250);
 				refresh();
 				clear();
 				i++;
+
+				
+				for (int j = 0; j < NUMBER_OF_PHILOSOPHERS; j++){
+					if (stan[j] != 3){
+						glod[j] = glod[j] + 0.25;
+					}
+					else
+					{
+						glod[j] = 0;
+					}
+				}
+
 				
 				if (fin){
 
@@ -269,25 +449,26 @@ int main(){
 			clear();
 			endwin();
 			
+
+			
+			
 			printf("Trwa zamykanie watkow ...");
 
-			if (myk.joinable())
-				myk.join();
+			pthread_join(cyk, NULL);
 
-			if (t1.joinable())
-				t1.join();
-
-			if (t2.joinable())
-				t2.join();
-
-			if (t3.joinable())
-				t3.join();
-
-			if (t4.joinable())
-				t4.join();
+			for (int i = 0; i < NUMBER_OF_PHILOSOPHERS; ++i) {
+				pthread_join(philosophers[i], NULL);
+			}
 			
-			if (t5.joinable())
-				t5.join();
+
+			sem_destroy(&waiter);
+			for (int i = 0; i < NUMBER_OF_PHILOSOPHERS; ++i) {
+				sem_destroy(&fork[i]);
+			}
+
+
+			//int a;
+			//a = getchar();
 			
 		}
 		else
