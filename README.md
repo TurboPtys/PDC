@@ -1,0 +1,3 @@
+# PDC
+
+Problem ucztujących filozofów
